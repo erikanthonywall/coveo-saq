@@ -1,0 +1,52 @@
+
+.headerContainer {
+	display: flex;
+	align-items: center;
+	padding: 0 16px;
+}
+
+.headerContent {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	flex: 1;
+}
+
+.headerButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	margin-left: 16px;
+	padding: 8px;
+	width: 48px;
+	height: 48px;
+	cursor: pointer;
+}
+
+.headerButtonLeft {
+	margin-left: 0;
+	margin-right: 16px;
+}
+
+.headerButton:hover {
+	background-color: hsl(171, 60%, 41%);
+}
+
+.headerIcon {
+	color: #fff;
+	font-size: 1.6rem;
+}
+
+.shoppingCartIcon {
+	margin-top: 4px;
+	margin-right: 4px;
+}
+
+@media (max-width: 768px) {
+	.headerContent {
+		flex-direction: column;
+	}
+}

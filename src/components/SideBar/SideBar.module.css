@@ -1,0 +1,17 @@
+.sidebarContainer {
+	width: 260px;
+	height: 100%;
+}
+
+@media (max-width: 768px) {
+	.sidebarContainer {
+		width: 100%;
+		transform: translateX(-100%);
+		transition: transform 0.4s;
+		position: absolute;
+	}
+
+	.sidebarContainer.visible {
+		transform: translateX(0);
+	}
+}
