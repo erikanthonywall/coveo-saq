@@ -1,11 +1,23 @@
 .productListContainer {
+	display: flex;
 	width: 100%;
+	align-items: center;
+	flex-direction: column;
 	overflow-y: auto;
-	padding-bottom: 100px;
+}
+
+.productListScrollContainer {
+	width: 100%;
+    padding-bottom: 100px;
+	display: flex;
+	justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 16px;
 }
 
 .productListContainer.loading {
 	padding-bottom: 0;
+	text-align: center;
 }
 
 .productListContainer .loadingSpinner {
@@ -17,4 +29,5 @@
 
 .productListContainer.loading .loadingSpinner {
 	display: flex;
+	padding-bottom: 20px;
 }

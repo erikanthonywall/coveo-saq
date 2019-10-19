@@ -7,13 +7,14 @@ import Search from '../../components/Search/Search';
 import ProductList from '../../components/ProductList/ProductList';
 
 import { searchProducts } from '../../api/products';
+import { IProduct, IGroupByResult, IQueryResult } from '../../types';
 
-const executeSearch = (searchText: string, setIsLoading: Function) => {
+const executeSearch = (searchText: string, setIsLoading: Function, parseResult: Function) => {
 	setIsLoading(true);
 
 	searchProducts(searchText).then((res) => {
-		console.log(res);
 		setIsLoading(false);
+		parseResult(res);
 	});
 };
 
@@ -23,10 +24,17 @@ const SearchPage: React.FC = () => {
 	const [isSideBarVisible, setIsSideBarVisible] = useState<boolean>(false);
 	const [searchText, setSearchText] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [products, setProducts] = useState<Array<IProduct>>([]);
+	const [groupByResults, setGroupByResults] = useState<Array<IGroupByResult>>([]);
 
 	useEffect(() => {
-		debouncedSearch(searchText, setIsLoading);
+		debouncedSearch(searchText, setIsLoading, parseResult);
 	}, [searchText]);
+
+	const parseResult = (res: IQueryResult) => {
+		setProducts(res.results);
+		setGroupByResults(res.groupByResults);
+	};
 
 	return (
 		<>
@@ -35,9 +43,9 @@ const SearchPage: React.FC = () => {
 			</Header>
 
 			<main className="main">
-				<SideBar isMobileVisible={isSideBarVisible} />
+				<SideBar isMobileVisible={isSideBarVisible} groupByResults={groupByResults} />
 
-				<ProductList isLoading={isLoading} />
+				<ProductList isLoading={isLoading} products={products} />
 			</main>
 		</>
 	);

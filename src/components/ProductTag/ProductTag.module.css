@@ -1,0 +1,16 @@
+.tagContainer {
+	color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    display: inline-block;
+    border-radius: 24px;
+	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
+}
+
+.icon {
+	color: #fff;
+	font-size: 16px;
+	margin-right: 8px;
+}
