@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import _debounce from 'lodash/debounce';
-import _findIndex from 'lodash/findIndex';
 
 import Header from '../../components/Header/Header';
 import SideBar from '../../components/SideBar/SideBar';
@@ -8,16 +7,23 @@ import Search from '../../components/Search/Search';
 import ProductList from '../../components/ProductList/ProductList';
 
 import { searchProducts } from '../../api/products';
-import { IProduct, IGroupByResult, IQueryResult, IFilters, IGroupByResultItem } from '../../types';
+import { IProduct, IGroupByResult, IQueryResult, IFilters, ESortField, ESortDirection } from '../../types';
 
 let firstResult: number = 0;
 let appendResults = true;
 let overwriteGroupByResults = true;
 
-const executeSearch = (searchText: string, filters: IFilters, setIsLoading: Function, parseResult: Function) => {
+const executeSearch = (
+	searchText: string,
+	filters: IFilters,
+	sortField: ESortField,
+	sortDir: ESortDirection,
+	setIsLoading: Function,
+	parseResult: Function
+) => {
 	setIsLoading(true);
 
-	searchProducts(searchText, filters, firstResult).then((res) => {
+	searchProducts(searchText, filters, firstResult, sortField, sortDir).then((res) => {
 		setIsLoading(false);
 		parseResult(res);
 	});
@@ -32,6 +38,8 @@ const SearchPage: React.FC = () => {
 	const [products, setProducts] = useState<Array<IProduct>>([]);
 	const [groupByResults, setGroupByResults] = useState<Array<IGroupByResult>>([]);
 	const [filters, setFilters] = useState<IFilters>(EMPTY_FILTERS);
+	const [sortField, setSortField] = useState<ESortField>(ESortField.relevance);
+	const [sortDirection, setSortDirection] = useState<ESortDirection>(ESortDirection.descending);
 
 	// Handle searching when the search input is changed
 	useEffect(() => {
@@ -39,14 +47,17 @@ const SearchPage: React.FC = () => {
 		firstResult = 0;
 		overwriteGroupByResults = true;
 		setFilters(EMPTY_FILTERS);
-		debouncedSearch(searchText, filters, setIsLoading, parseResult);
+		debouncedSearch(searchText, filters, sortField, sortDirection, setIsLoading, parseResult);
+		// eslint-disable-next-line
 	}, [searchText]);
 
+	// Handle searching when filter options or sorting are changed
 	useEffect(() => {
 		appendResults = false;
 		firstResult = 0;
-		debouncedSearch(searchText, filters, setIsLoading, parseResult);
-	}, [filters]);
+		debouncedSearch(searchText, filters, sortField, sortDirection, setIsLoading, parseResult);
+		// eslint-disable-next-line
+	}, [filters, sortField, sortDirection]);
 
 	// Parse the results of the search and set them in state
 	const parseResult = (res: IQueryResult) => {
@@ -62,6 +73,7 @@ const SearchPage: React.FC = () => {
 		appendResults = true;
 
 		if (overwriteGroupByResults) {
+			console.log(res.groupByResults);
 			setGroupByResults(res.groupByResults);
 			overwriteGroupByResults = false;
 		}
@@ -70,7 +82,7 @@ const SearchPage: React.FC = () => {
 	// Load more results from the autoscroller
 	const loadMoreResults = () => {
 		firstResult += 12;
-		executeSearch(searchText, filters, setIsLoading, parseResult);
+		executeSearch(searchText, filters, sortField, sortDirection, setIsLoading, parseResult);
 	};
 
 	const setFilterOptions = (field: string, values: Array<string>) => {
@@ -78,6 +90,19 @@ const SearchPage: React.FC = () => {
 			...filters,
 			[field]: values
 		});
+	};
+
+	const setSortingOptions = (field: ESortField) => {
+		if (field === sortField) {
+			if (sortDirection === ESortDirection.ascending) {
+				setSortDirection(ESortDirection.descending);
+			} else {
+				setSortDirection(ESortDirection.ascending);
+			}
+		} else {
+			setSortField(field);
+			setSortDirection(ESortDirection.descending);
+		}
 	};
 
 	return (
@@ -90,8 +115,11 @@ const SearchPage: React.FC = () => {
 				<SideBar
 					isMobileVisible={isSideBarVisible}
 					groupByResults={groupByResults}
+					sortField={sortField}
+					sortDirection={sortDirection}
+					onChangeSort={setSortingOptions}
 					filters={filters}
-					onChange={setFilterOptions} />
+					onChangeFilters={setFilterOptions} />
 
 				<ProductList
 					isLoading={isLoading}
@@ -103,7 +131,7 @@ const SearchPage: React.FC = () => {
 	);
 }
 
-const EMPTY_FILTERS = {
+export const EMPTY_FILTERS = {
 	tpenspecial: [],
 	tpdisponibilite: [],
 	tpcategorie: [],

@@ -38,3 +38,15 @@ export interface IGroupByResultItem {
 export interface IFilters {
 	[key: string]: Array<string>
 }
+
+export enum ESortField {
+	relevance,
+	price,
+	date,
+	vintage
+}
+
+export enum ESortDirection {
+	ascending,
+	descending
+}

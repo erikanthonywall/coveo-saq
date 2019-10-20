@@ -48,12 +48,10 @@ const GroupByResult: React.FC<IProps> = ({ isCollapsedInitial, groupByResult, fi
 		return null;
 	}
 
-	console.log(isCollapsed);
-
 	return (
 		<div className={`noselect ${styles.gbrContainer} ${isCollapsed ? styles.collapsed : ''}`}>
 			<div className={styles.gbrHeader}>
-				<h3 className={styles.gbrFieldName}>
+				<h3 data-test-id="gbrFieldName" className={styles.gbrFieldName}>
 					{groupByResult.label}
 				</h3>
 
@@ -70,14 +68,14 @@ const GroupByResult: React.FC<IProps> = ({ isCollapsedInitial, groupByResult, fi
 			<div className={styles.collapseContainer}>
 				{
 					groupByResult.values.map((v, i) =>
-						<div key={i}>
+						<div key={i} className={styles.filterRow}>
 							<label className={`checkbox ${styles.gbrCheckLabel}`}>
 								<input
 									type="checkbox"
 									checked={isChecked(v.name)}
 									onChange={(e) => onCheckFilter(v.name, e.target.checked)} />
 								
-								<span className={styles.gbrCheckLabelName}>
+								<span data-test-id="gbrCheckLabelName" className={styles.gbrCheckLabelName}>
 									{v.name === 'true' ? 'On Sale' : v.name}
 								</span>
 							</label>

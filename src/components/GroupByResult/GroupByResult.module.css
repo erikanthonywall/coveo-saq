@@ -22,6 +22,8 @@
 
 .collapseContainer {
 	overflow: hidden;
+    margin: 0 -8px;
+    padding: 0 8px;
 }
 
 .gbrContainer.collapsed .collapseContainer {
@@ -39,6 +41,7 @@
 
 .gbrCheckLabel {
 	display: flex;
+	flex: 1;
 	align-items: center;
 	margin-bottom: 4px;
 }
@@ -47,4 +50,18 @@
 	flex: 1;
 	color: #fff;
 	margin-left: 8px;
+}
+
+.filterRow {
+	display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 16px;
+    padding: 0px 8px;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+
+.filterRow:hover {
+	background-color: #848383;
 }

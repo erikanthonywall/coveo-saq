@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../config/config.json';
 import {
-	IQueryResult, IFilters
+	IQueryResult, IFilters, ESortField, ESortDirection
 } from '../types';
 
 /*
@@ -9,7 +9,8 @@ Searches the Coveo API for products.
 
 @param {string} q: The search term
 @param {IFilters} filters: The map of filters to filter the results
-@param {string} sortField: The field to sort on
+@param {number} firstResult: The 0-based index of entries to skip when querying results
+@param {string} sortF: The field to sort on
 @param {string} sortDir: The direction to sort, either 'ascending' or 'descending'
 
 @returns Promise<IQueryResult>
@@ -18,11 +19,13 @@ export const searchProducts = async (
 	q: string,
 	filters: IFilters,
 	firstResult: number,
-	sortField?: string,
-	sortDir?: string
+	sortF?: ESortField,
+	sortDir?: ESortDirection
 ): Promise<IQueryResult> => {
 	const aqArr: Array<string> = [];
 	let aq: string = '';
+	let sortCriteria: string = 'relevancy';
+	let sortField: string = '';
 
 	for (let key in filters) {
 		if (filters[key].length === 1) {
@@ -40,10 +43,24 @@ export const searchProducts = async (
 
 	aq = aqArr.join(' ');
 
+	if (sortF !== undefined && sortDir !== undefined) {
+		if (sortF === ESortField.price) {
+			sortField = '@tpprixnum';
+			sortCriteria = 'field' + ESortDirection[sortDir];
+		} else if (sortF === ESortField.date) {
+			sortCriteria = sortDir === ESortDirection.ascending ? 'dateascending' : 'datedescending';
+		} else if (sortF === ESortField.vintage) {
+			sortField = '@tpmillesime';
+			sortCriteria = 'field' + ESortDirection[sortDir];
+		}
+	}
+
 	const queryResult = await axios.post(config.coveo.baseUrl, {
 		...defaultParams,
 		q,
 		aq,
+		sortCriteria,
+		sortField,
 		firstResult
 	});
 

@@ -1,0 +1,33 @@
+.sortContainer {
+	margin: 16px;
+}
+
+.sortHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #fff;
+	margin-bottom: 8px;
+	color: #fff;
+	font-size: 18px;
+}
+
+.sortRow {
+	color: #fff;
+    display: flex;
+    align-items: center;
+	cursor: pointer;
+	border-radius: 16px;
+    padding: 0px 8px;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+
+.sortRow span {
+	flex: 1;
+	margin-left: 8px;
+}
+
+.sortRow:hover {
+	background-color: #848383;
+}
