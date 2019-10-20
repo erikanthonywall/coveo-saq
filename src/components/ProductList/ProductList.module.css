@@ -4,11 +4,11 @@
 	align-items: center;
 	flex-direction: column;
 	overflow-y: auto;
+	padding-bottom: 100px;
 }
 
 .productListScrollContainer {
 	width: 100%;
-    padding-bottom: 100px;
 	display: flex;
 	justify-content: space-around;
     flex-wrap: wrap;
@@ -17,17 +17,32 @@
 
 .productListContainer.loading {
 	padding-bottom: 0;
-	text-align: center;
 }
 
 .productListContainer .loadingSpinner {
 	display: none;
-	height: 100px;
+	padding-bottom: 32px;
+	padding-top: 32px;
 	align-items: center;
 	justify-content: center;
 }
 
 .productListContainer.loading .loadingSpinner {
 	display: flex;
-	padding-bottom: 20px;
+}
+
+.noResultsContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: rgba(0, 0, 0, 0.6);
+}
+
+.noResultsIcon {
+	font-size: 48px;
+}
+
+.endOfResults {
+	text-align: center;
 }

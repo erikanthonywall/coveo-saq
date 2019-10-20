@@ -27,10 +27,14 @@ export interface IProduct {
 
 export interface IGroupByResult {
 	field: string,
+	label: string,
 	values: Array<IGroupByResultItem>
 }
 
 export interface IGroupByResultItem {
-	count: number,
 	name: string
+}
+
+export interface IFilters {
+	[key: string]: Array<string>
 }

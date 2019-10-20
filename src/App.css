@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	overflow: hidden;
 }
 
 #root {
@@ -28,4 +29,8 @@ html, body {
 	-moz-user-select: none; /* Old versions of Firefox */
 	-ms-user-select: none; /* Internet Explorer/Edge */
 	user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+.has-background-primary {
+	background-color: rgb(122, 0, 60)!important;
 }

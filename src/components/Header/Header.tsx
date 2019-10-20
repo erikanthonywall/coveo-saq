@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Header.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 interface IProps {
 	onShowSideBar(): void,
@@ -33,10 +33,8 @@ const Header: React.FC<IProps> = ({ onShowSideBar, children }) => {
 				{children}
 			</div>
 
-			<div className={`${styles.headerButton} ${styles.shoppingCartIcon}`}>
-				<FontAwesomeIcon
-					icon={faShoppingCart}
-					className={styles.headerIcon} />
+			<div className={`${styles.headerButton}`}>
+				
 			</div>
 		</header>
 	)

@@ -1,13 +1,14 @@
 import axios from 'axios';
 import config from '../config/config.json';
 import {
-	IQueryResult
+	IQueryResult, IFilters
 } from '../types';
 
 /*
 Searches the Coveo API for products.
 
 @param {string} q: The search term
+@param {IFilters} filters: The map of filters to filter the results
 @param {string} sortField: The field to sort on
 @param {string} sortDir: The direction to sort, either 'ascending' or 'descending'
 
@@ -15,12 +16,35 @@ Searches the Coveo API for products.
 */
 export const searchProducts = async (
 	q: string,
+	filters: IFilters,
+	firstResult: number,
 	sortField?: string,
 	sortDir?: string
 ): Promise<IQueryResult> => {
+	const aqArr: Array<string> = [];
+	let aq: string = '';
+
+	for (let key in filters) {
+		if (filters[key].length === 1) {
+			aqArr.push(`(@${key}=="${filters[key][0]}")`);
+		} else if (filters[key].length > 1) {
+			const valuesArr: Array<string> = [];
+
+			for (let i in filters[key]) {
+				valuesArr.push(`"${filters[key][i]}"`);
+			}
+
+			aqArr.push(`(@${key}==(${valuesArr.join(',')}))`);
+		}
+	}
+
+	aq = aqArr.join(' ');
+
 	const queryResult = await axios.post(config.coveo.baseUrl, {
 		...defaultParams,
-		q
+		q,
+		aq,
+		firstResult
 	});
 
 	return {
@@ -42,6 +66,7 @@ export const searchProducts = async (
 		})),
 		groupByResults: queryResult.data.groupByResults.map((gbr: any) => ({
 			field: gbr.field,
+			label: getGroupByLabel(gbr.field),
 			values: gbr.values.map((value: any) => ({
 				count: value.numberOfResults,
 				name: value.lookupValue
@@ -56,125 +81,86 @@ const defaultParams = {
 	timeZone: Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/Toronto',
 	numberOfResults: 12,
 	groupBy: [{
-		"field": "@tpenspecial",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpenspecial'
 	}, {
-		"field": "@tpdisponibilite",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpdisponibilite'
 	}, {
-		"field": "@tpcategorie",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpcategorie'
 	}, {
-		"field": "@tppays",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tppays'
 	}, {
-		"field": "@tpregion",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpmillesime'
 	}, {
-		"field": "@tpmillesime",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpcepagenomsplitgroup'
 	}, {
-		"field": "@tpcoteexpertsplitgroup",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpinventairenomsuccursalesplitgroup'
 	}, {
-		"field": "@tpcepagenomsplitgroup",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tppastilledegout'
 	}, {
-		"field": "@tpinventairenomsuccursalesplitgroup",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpfamilledevinsplitgroup'
 	}, {
-		"field": "@tpclassification",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpaccordsnommenu'
 	}, {
-		"field": "@tppastilledegout",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpobservationsgustativesacidite'
 	}, {
-		"field": "@tpfamilledevinsplitgroup",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpobservationsgustativescorps'
 	}, {
-		"field": "@tpaccordsnommenu",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpobservationsgustativessucre'
 	}, {
-		"field": "@tpparticularitesplitgroup",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
+		field: '@tpobservationsgustativestannins'
 	}, {
-		"field": "@tpobservationsgustativesacidite",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
-	}, {
-		"field": "@tpobservationsgustativescorps",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
-	}, {
-		"field": "@tpobservationsgustativessucre",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
-	}, {
-		"field": "@tpobservationsgustativestannins",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
-	}, {
-		"field": "@tpobservationsgustativestexture",
-		"maximumNumberOfValues": 6,
-		"sortCriteria": "occurrences",
-		"injectionDepth": 1000,
-		"completeFacetWithStandardValues": true
-	}, {
-		"field": "@tpprixnum",
-		"completeFacetWithStandardValues": true,
-		"generateAutomaticRanges": true,
-		"maximumNumberOfValues": 1,
-		"queryOverride": "@sysuri",
-		"sortCriteria": "nosort"
+		field: '@tpobservationsgustativestexture'
 	}]
 };
+
+const getGroupByLabel = (field: string) => {
+	switch (field) {
+		case 'tpenspecial':
+			return 'On Sale';
+
+		case 'tpdisponibilite':
+			return 'Availability';
+
+		case 'tpcategorie':
+			return 'Category';
+
+		case 'tppays':
+			return 'Country';
+
+		case 'tpmillesime':
+			return 'Vintage';
+
+		case 'tpcepagenomsplitgroup':
+			return 'Variety';
+
+		case 'tpinventairenomsuccursalesplitgroup':
+			return 'Branch';
+
+		case 'tppastilledegout':
+			return 'Flavour Profile';
+
+		case 'tpfamilledevinsplitgroup':
+			return 'Family of Wine';
+
+		case 'tpaccordsnommenu':
+			return 'Suggested Pairings';
+
+		case 'tpobservationsgustativesacidite':
+			return 'Acidity';
+
+		case 'tpobservationsgustativescorps':
+			return 'Body';
+
+		case 'tpobservationsgustativessucre':
+			return 'Sweetness';
+
+		case 'tpobservationsgustativestannins':
+			return 'Tannins';
+
+		case 'tpobservationsgustativestexture':
+			return 'Texture';
+
+		default:
+			return null;
+	}
+}

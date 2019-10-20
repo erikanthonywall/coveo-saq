@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Product.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt, faShoppingCart, faFlag, faWineBottle, faCity, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt, faFlag, faWineBottle, faCity, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { IProduct } from '../../types';
 import ProductTag from '../ProductTag/ProductTag';
 
@@ -10,9 +10,7 @@ interface IProps {
 	product: IProduct
 }
 
-const Product: React.FC<IProps> = ({ product }) => {
-	const addProductToShoppingCart = () => { };
-
+const Product = React.memo<IProps>(({ product }) => {
 	return (
 		<div className={styles.productContainer}>
 			<div className={styles.productImageWrapper}>
@@ -47,19 +45,15 @@ const Product: React.FC<IProps> = ({ product }) => {
 				</div>
 
 				<div className={styles.productImageOverlay}>
-					<a href={product.uri} target="_blank">
+					<a href={product.uri} target="_blank" rel="noopener noreferrer">
 						<FontAwesomeIcon className={styles.productImageOverlayIcon} icon={faExternalLinkAlt} />
 					</a>
-
-					<div onClick={addProductToShoppingCart}>
-						<FontAwesomeIcon className={styles.productImageOverlayIcon} icon={faShoppingCart} />
-					</div>
 				</div>
 			</div>
 
 			<div className={`${styles.productLabel} has-background-primary`}>
 				<div style={{ height: 45 }}>
-					<a href={product.uri} target="_blank">
+					<a href={product.uri} target="_blank" rel="noopener noreferrer">
 						<span className={`${styles.productLink} has-text-white`}>{product.name}</span>
 					</a>
 				</div>
@@ -80,6 +74,6 @@ const Product: React.FC<IProps> = ({ product }) => {
 			</div>
 		</div>
 	);
-}
+});
 
 export default Product;
